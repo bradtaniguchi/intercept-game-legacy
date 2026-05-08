@@ -3,5 +3,8 @@
   "framework": "nextjs",
   "buildCommand": "npx nx build game-client --prod",
   "outputDirectory": "dist/apps/game-client/.next",
-  "ignoreCommand": "npx nx-ignore game-client"
+  "ignoreCommand": "npx nx-ignore game-client",
+  "github": {
+    "enabled": false
+  }
 }
