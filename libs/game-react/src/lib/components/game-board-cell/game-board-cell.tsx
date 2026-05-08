@@ -22,7 +22,24 @@ export type GameBoardCellProps =
   | GameBoardCellPropsPlane
   | GameBoardCellPropsOther;
 
-export interface GameBoardCellPropsPlane extends BoardLocation {
+/**
+ * Common interaction handlers shared by all cell variants.
+ */
+export interface GameBoardCellHandlers {
+  /**
+   * Called when the user clicks the cell.
+   */
+  onClick?: () => void;
+
+  /**
+   * Called when the user hovers over the cell.
+   */
+  onHover?: () => void;
+}
+
+export interface GameBoardCellPropsPlane
+  extends BoardLocation,
+    GameBoardCellHandlers {
   boardCellType: 'plane';
   /**
    * The direction the plane is facing
@@ -38,9 +55,19 @@ export interface GameBoardCellPropsPlane extends BoardLocation {
  * Represents the props for all game-location states **except**
  * the plane.
  */
-export interface GameBoardCellPropsOther extends BoardLocation {
+export interface GameBoardCellPropsOther
+  extends BoardLocation,
+    GameBoardCellHandlers {
   boardCellType: Exclude<BoardCellType, 'plane'>;
 }
+
+/**
+ * Cell data without positional info (`x`/`y`). Used by `GameBoardRow`
+ * and `GameBoardGrid` to describe a cell before its location is applied.
+ */
+export type GameBoardCellData =
+  | Omit<GameBoardCellPropsPlane, 'x' | 'y'>
+  | Omit<GameBoardCellPropsOther, 'x' | 'y'>;
 
 /**
  * The board-cell is responsible for rendering the given cell-ui
@@ -52,7 +79,7 @@ export interface GameBoardCellPropsOther extends BoardLocation {
 export const GameBoardCell = memo(function GameBoardCell(
   props: GameBoardCellProps
 ) {
-  const { boardCellType } = props;
+  const { boardCellType, onClick, onHover } = props;
 
   let icon: JSX.Element | null = null;
   if (isPlaneBoardCellType(boardCellType)) {
@@ -61,5 +88,13 @@ export const GameBoardCell = memo(function GameBoardCell(
   if (isNonPlaneBoardCellType(boardCellType)) {
     icon = getIcon(props as GameBoardCellPropsOther);
   }
-  return <div data-pos={getBoardLocationString(props)}>{icon}</div>;
+  return (
+    <div
+      data-pos={getBoardLocationString(props)}
+      onClick={onClick}
+      onMouseEnter={onHover}
+    >
+      {icon}
+    </div>
+  );
 });

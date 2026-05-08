@@ -22,9 +22,16 @@ export function getIcon(params: GetIconParams) {
       return <FontAwesomeIcon icon={faCloud} />;
     case 'can-move':
       return <FontAwesomeIcon icon={faSquare} />;
-    case 'plane':
-      // TODO: add rotation
-      return <FontAwesomeIcon icon={faJetFighter} />;
+    case 'plane': {
+      const rotationDeg = { north: 0, east: 90, south: 180, west: 270 }[
+        (params as GetIconForPlane).direction
+      ];
+      return (
+        <span style={{ display: 'inline-block', transform: `rotate(${rotationDeg}deg)` }}>
+          <FontAwesomeIcon icon={faJetFighter} />
+        </span>
+      );
+    }
     case 'aa':
       return <FontAwesomeIcon icon={faBurst} />;
     case 'bones':
